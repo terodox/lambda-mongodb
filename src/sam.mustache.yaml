@@ -1,0 +1,78 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: MongoDb Lambda Function
+Resources:
+  # --------------------------------------------------- IAM ROLES ------------------------------------------------
+  MongoDbLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      Policies:
+      - PolicyName: logs
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:*
+            Resource: arn:aws:logs:*:*:*
+  # --------------------------------------------------- LAMBDA --------------------------------------------------
+  MongoDbLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./deploy.zip
+      Handler: index.handler
+      Runtime: nodejs4.3
+      Timeout: 30
+      Role: !GetAtt MongoDbLambdaExecutionRole.Arn
+      Events:
+        RespondToApi:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+      Environment:
+        Variables:
+          mongoDbUrl: mongodb://{{mongoDbUsername}}:{{mongoDbPassword}}@ds121171.mlab.com:21171/terodoxmongodb
+  # --------------------------------------------------- API GATEWAY ----------------------------------------------
+  MongoDbApi:
+    Type: AWS::Serverless::Api
+    Properties:
+        StageName: data
+        DefinitionBody:
+          swagger: "2.0"
+          info:
+            version: "2017-04-27T00:30:42Z"
+            title: "mongodb"
+          schemes:
+          - "https"
+          paths:
+            /{proxy+}:
+              x-amazon-apigateway-any-method:
+                accepts:
+                - "application/json"
+                produces:
+                - "application/json"
+                parameters:
+                - name: "proxy"
+                  in: "path"
+                  required: true
+                  type: "string"
+                responses: {}
+                x-amazon-apigateway-integration:
+                  responses:
+                    default:
+                      statusCode: "200"
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MongoDbLambdaFunction.Arn}/invocations
+                  passthroughBehavior: "when_no_match"
+                  httpMethod: "POST"
+                  contentHandling: "CONVERT_TO_TEXT"
+                  type: "aws_proxy"

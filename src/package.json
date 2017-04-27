@@ -1,0 +1,33 @@
+{
+  "name": "lambda-mongodb",
+  "version": "1.0.0",
+  "description": "A simple lambda to interact with a mongodb database",
+  "main": "index.js",
+  "scripts": {
+    "build": "bash build.sh",
+    "deploy": "bash deploy.sh",
+    "test": "mocha /test/**/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/terodox/lambda-mongodb.git"
+  },
+  "keywords": [
+    "mongodb",
+    "lambda",
+    "aws",
+    "awslambda"
+  ],
+  "author": "Andy Desmarais <terodox@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/terodox/lambda-mongodb/issues"
+  },
+  "homepage": "https://github.com/terodox/lambda-mongodb#readme",
+  "dependencies": {
+    "mongodb": "^2.2.26"
+  },
+  "devDependencies": {
+    "@types/mongodb": "^2.2.0"
+  }
+}
