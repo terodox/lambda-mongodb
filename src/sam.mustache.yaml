@@ -34,11 +34,6 @@ Resources:
       Runtime: nodejs4.3
       Timeout: 30
       Role: !GetAtt MongoDbLambdaExecutionRole.Arn
-      Events:
-        RespondToApi:
-          Type: Api
-          Properties:
-            Path: /{proxy+}
       Environment:
         Variables:
           mongoDbUrl: mongodb://{{mongoDbUsername}}:{{mongoDbPassword}}@ds121171.mlab.com:21171/terodoxmongodb
@@ -57,8 +52,6 @@ Resources:
           paths:
             /{proxy+}:
               x-amazon-apigateway-any-method:
-                accepts:
-                - "application/json"
                 produces:
                 - "application/json"
                 parameters:
