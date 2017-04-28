@@ -9,6 +9,7 @@ exports.handler = function (event, context, callback) {
     mongoPromise
         .then(db => {
             console.log(db);
+            callback(null, {});
         })
         .catch(err => {
             console.error(err);
