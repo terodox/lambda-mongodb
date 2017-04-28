@@ -32,7 +32,7 @@ Resources:
       CodeUri: deploy.zip
       Handler: index.handler
       Runtime: nodejs4.3
-      Timeout: 30
+      Timeout: 5
       Role: !GetAtt MongoDbLambdaExecutionRole.Arn
       Environment:
         Variables:
