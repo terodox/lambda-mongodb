@@ -29,7 +29,7 @@ Resources:
   MongoDbLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ./deploy.zip
+      CodeUri: deploy.zip
       Handler: index.handler
       Runtime: nodejs4.3
       Timeout: 30
@@ -64,7 +64,7 @@ Resources:
                   responses:
                     default:
                       statusCode: "200"
-                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MongoDbLambdaFunction.Arn}/invocations
+                  uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MongoDbLambdaFunction.Arn}/invocations
                   passthroughBehavior: "when_no_match"
                   httpMethod: "POST"
                   contentHandling: "CONVERT_TO_TEXT"
