@@ -2,13 +2,18 @@
 
 const MongoClient = require("mongodb").MongoClient;
 
-const mongoPromise = MongoClient.connect(process.env.mongoDbUrl);
-
 exports.handler = function (event, context, callback) {
     console.log(JSON.stringify(event));
-    mongoPromise
+
+    let mongoDb;
+    MongoClient.connect(process.env.mongoDbUrl)
         .then(db => {
-            console.log(db);
+            mongoDb = db;
+            console.log("Connected to Mongo DB");
+            return dispatchHttpCall(mongoDb, event.httpMethod);
+        })
+        .then(() => {
+            mongoDb.close();
             callback(null, "success");
         })
         .catch(err => {
@@ -16,3 +21,16 @@ exports.handler = function (event, context, callback) {
             callback(`INTERNAL_ERROR: a catastrophic error occurred. RequestId: ${context.awsRequestId}`);
         });
 };
+
+function dispatchHttpCall(mongoDb, httpMethod) {
+    switch (httpMethod) {
+        case 'DELETE':
+            return Promise.resolve();
+        case 'GET':
+            return Promise.resolve();
+        case 'POST':
+            return Promise.resolve();
+        default:
+            return Promise.reject(`Unsupported method "${httpMethod}"`);
+    }
+}
